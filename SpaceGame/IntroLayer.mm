@@ -44,12 +44,30 @@
 		
 		CCSprite *background;
 		
-		if( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone ) {
-			background = [CCSprite spriteWithFile:@"Default.png"];
-			background.rotation = 90;
-		} else {
-			background = [CCSprite spriteWithFile:@"Default-Landscape.png"];
-		}
+		if( UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+        {
+            if( CC_CONTENT_SCALE_FACTOR() == 2 ) {
+                background = [CCSprite spriteWithFile:@"Default-Landscape@2x.png"];
+            }
+            else {
+                background = [CCSprite spriteWithFile:@"Default-Landscape.png"];
+            }
+        }
+        else
+        {
+            if( CC_CONTENT_SCALE_FACTOR() == 2 ) {
+                if ([[UIScreen mainScreen ] bounds].size.height >= 568.0f) {
+                    background = [CCSprite spriteWithFile:@"Default-568h@2x.png"];
+                } else {
+                    background = [CCSprite spriteWithFile:@"Default@2x.png"];
+                }
+            }
+            else {
+                background = [CCSprite spriteWithFile:@"Default.png"];
+            }
+            background.rotation = 90;
+        }
+        
 		background.position = ccp(size.width/2, size.height/2);
 		
 		// add the label as a child to this Layer

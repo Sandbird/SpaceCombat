@@ -25,7 +25,6 @@
 		84B685A416872B0D0054D649 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B685A316872B0D0054D649 /* Foundation.framework */; };
 		84B685A616872B0D0054D649 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B685A516872B0D0054D649 /* CoreGraphics.framework */; };
 		84B685A816872B0D0054D649 /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B685A716872B0D0054D649 /* GameKit.framework */; };
-		84B685C116872B0D0054D649 /* iTunesArtwork in Resources */ = {isa = PBXBuildFile; fileRef = 84B685C016872B0D0054D649 /* iTunesArtwork */; };
 		84B685C616872B0D0054D649 /* CCAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 84B685C516872B0D0054D649 /* CCAction.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		84B685C916872B0D0054D649 /* CCActionCamera.m in Sources */ = {isa = PBXBuildFile; fileRef = 84B685C816872B0D0054D649 /* CCActionCamera.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		84B685CC16872B0D0054D649 /* CCActionCatmullRom.m in Sources */ = {isa = PBXBuildFile; fileRef = 84B685CB16872B0D0054D649 /* CCActionCatmullRom.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -181,7 +180,6 @@
 		84B687C516872B100054D649 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84B687C416872B100054D649 /* AppDelegate.mm */; };
 		84B687CB16872B100054D649 /* IntroLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84B687CA16872B100054D649 /* IntroLayer.mm */; };
 		84B687CE16872B100054D649 /* GLES-Render.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84B687CD16872B100054D649 /* GLES-Render.mm */; };
-		84B687D016872B100054D649 /* blocks.png in Resources */ = {isa = PBXBuildFile; fileRef = 84B687CF16872B100054D649 /* blocks.png */; };
 		84B6882516872C8A0054D649 /* bg_front_spacedust-hd.png in Resources */ = {isa = PBXBuildFile; fileRef = 84B687D816872C8A0054D649 /* bg_front_spacedust-hd.png */; };
 		84B6882616872C8A0054D649 /* bg_front_spacedust-ipadhd.png in Resources */ = {isa = PBXBuildFile; fileRef = 84B687D916872C8A0054D649 /* bg_front_spacedust-ipadhd.png */; };
 		84B6882716872C8A0054D649 /* bg_front_spacedust.png in Resources */ = {isa = PBXBuildFile; fileRef = 84B687DA16872C8A0054D649 /* bg_front_spacedust.png */; };
@@ -267,7 +265,6 @@
 		84B685A516872B0D0054D649 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		84B685A716872B0D0054D649 /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
 		84B685BF16872B0D0054D649 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = Resources/Info.plist; sourceTree = "<group>"; };
-		84B685C016872B0D0054D649 /* iTunesArtwork */ = {isa = PBXFileReference; lastKnownFileType = file; name = iTunesArtwork; path = Resources/iTunesArtwork; sourceTree = "<group>"; };
 		84B685C416872B0D0054D649 /* CCAction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CCAction.h; path = libs/cocos2d/CCAction.h; sourceTree = "<group>"; };
 		84B685C516872B0D0054D649 /* CCAction.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = CCAction.m; path = libs/cocos2d/CCAction.m; sourceTree = "<group>"; };
 		84B685C716872B0D0054D649 /* CCActionCamera.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CCActionCamera.h; path = libs/cocos2d/CCActionCamera.h; sourceTree = "<group>"; };
@@ -613,7 +610,6 @@
 		84B687CA16872B100054D649 /* IntroLayer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = IntroLayer.mm; sourceTree = "<group>"; };
 		84B687CC16872B100054D649 /* GLES-Render.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "GLES-Render.h"; sourceTree = "<group>"; };
 		84B687CD16872B100054D649 /* GLES-Render.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "GLES-Render.mm"; sourceTree = "<group>"; };
-		84B687CF16872B100054D649 /* blocks.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = blocks.png; path = Resources/blocks.png; sourceTree = "<group>"; };
 		84B687D816872C8A0054D649 /* bg_front_spacedust-hd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bg_front_spacedust-hd.png"; sourceTree = "<group>"; };
 		84B687D916872C8A0054D649 /* bg_front_spacedust-ipadhd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bg_front_spacedust-ipadhd.png"; sourceTree = "<group>"; };
 		84B687DA16872C8A0054D649 /* bg_front_spacedust.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bg_front_spacedust.png; sourceTree = "<group>"; };
@@ -767,8 +763,6 @@
 			isa = PBXGroup;
 			children = (
 				84B685BF16872B0D0054D649 /* Info.plist */,
-				84B685C016872B0D0054D649 /* iTunesArtwork */,
-				84B687CF16872B100054D649 /* blocks.png */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1470,9 +1464,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				84B685C116872B0D0054D649 /* iTunesArtwork in Resources */,
 				84B6871016872B0F0054D649 /* ChangeLog in Resources */,
-				84B687D016872B100054D649 /* blocks.png in Resources */,
 				84B6882516872C8A0054D649 /* bg_front_spacedust-hd.png in Resources */,
 				84B6882616872C8A0054D649 /* bg_front_spacedust-ipadhd.png in Resources */,
 				84B6882716872C8A0054D649 /* bg_front_spacedust.png in Resources */,

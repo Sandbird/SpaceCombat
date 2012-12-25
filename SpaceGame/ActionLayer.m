@@ -10,6 +10,7 @@
 #import "Common.h"
 #import "SimpleAudioEngine.h"
 #import "SpriteArray.h"
+#import "CCParallaxNode-Extras.h"
 
 @implementation ActionLayer {
     CCLabelBMFont *_titleLabel1;
@@ -21,6 +22,13 @@
     double _nextAsteroidSpawn;
     SpriteArray *_asteroidsArray;
     SpriteArray *_laserArray;
+    CCParallaxNode * _backgroundNode;
+    CCSprite * _spacedust1;
+    CCSprite * _spacedust2;
+    CCSprite * _planetsunrise;
+    CCSprite * _galaxy;
+    CCSprite * _spacialanomaly;
+    CCSprite * _spacialanomaly2;
 }
 
 +(id)scene {
@@ -155,6 +163,51 @@
                                              batchNode:_batchNode];
 }
 
+-(void)setupBackground {
+    CGSize winSize = [CCDirector sharedDirector].winSize;
+    
+    // Create the CCParallaxNode
+    _backgroundNode = [CCParallaxNode node];
+    [self addChild:_backgroundNode z:-2];
+    
+    // create the sprites you add to the CC ParallaxNode
+    _spacedust1 = [CCSprite spriteWithFile:@"bg_front_spacedust.png"];
+    _spacedust2 = [CCSprite spriteWithFile:@"bg_front_spacedust.png"];
+    _planetsunrise = [CCSprite spriteWithFile:@"bg_planetsunrise.png"];
+    _galaxy = [CCSprite spriteWithFile:@"bg_galaxy.png"];
+    _spacialanomaly = [CCSprite spriteWithFile:@"bg_spacialanomaly.png"];
+    _spacialanomaly2 = [CCSprite spriteWithFile:@"bg_spacialanomaly2.png"];
+
+    // Determine relative movement speeds for spce dust and background
+    CGPoint dustSpeed = ccp (0.1, 0.1);
+    CGPoint bgSpeed = ccp(0.05, 0.05);
+    
+    //add children to CCParallaxNode
+    [_backgroundNode addChild:_spacedust1
+                            z:0
+                parallaxRatio:dustSpeed
+               positionOffset:ccp(0, winSize.height/2)];
+    [_backgroundNode addChild:_spacedust2
+                            z:0
+                parallaxRatio:dustSpeed
+               positionOffset:ccp(_spacedust1.contentSize.width * _spacedust1.scale, winSize.height/2)];
+    [_backgroundNode addChild:_galaxy
+                            z:-1
+                parallaxRatio:bgSpeed
+               positionOffset:ccp(0,winSize.height * 0.7)];
+    [_backgroundNode addChild:_planetsunrise
+                            z:-1
+                parallaxRatio:bgSpeed
+               positionOffset:ccp(600, winSize.height * 0)];
+    [_backgroundNode addChild:_spacialanomaly z:-1
+                parallaxRatio:bgSpeed
+               positionOffset:ccp(900,winSize.height * 0.3)];
+    [_backgroundNode addChild:_spacialanomaly2 z:-1
+                parallaxRatio:bgSpeed
+               positionOffset:ccp(1500,winSize.height * 0.9)];
+
+}
+
 - (id)init
 {
     self = [super init];
@@ -167,6 +220,7 @@
         [self scheduleUpdate];
         [self setupArrays];
         [self setTouchEnabled:YES];
+        [self setupBackground];
     }
     return self;
 }
@@ -240,10 +294,41 @@
     }
 }
 
+-(void)updateBackground:(ccTime)dt {
+    CGPoint backgroundScrollVel = ccp(-1000, 0);
+    _backgroundNode.position = ccpAdd(_backgroundNode.position, ccpMult(backgroundScrollVel, dt));
+}
+
+- (void)visit {
+    [super visit];
+    NSArray *spaceDusts = @[_spacedust1, _spacedust2];
+    for (CCSprite *spaceDust in spaceDusts) {
+        if ([_backgroundNode
+             convertToWorldSpace:spaceDust.position].x < -
+            spaceDust.contentSize.width/2*self.scale) {
+            [_backgroundNode
+             incrementOffset:ccp(2*spaceDust.contentSize.width*
+                                 spaceDust.scale,0)
+             forChild:spaceDust];
+        }
+    }
+    NSArray *backgrounds = @[_planetsunrise, _galaxy, _spacialanomaly,
+    _spacialanomaly2];
+    for (CCSprite *background in backgrounds) {
+        if ([_backgroundNode
+             convertToWorldSpace:background.position].x < -
+            background.contentSize.width/2*self.scale) {
+            [_backgroundNode incrementOffset:ccp(2000,0)
+                                    forChild:background];
+        }
+    }
+}
+
 - (void)update:(ccTime)dt {
     [self updateShipPos:dt];
     [self updateAsteriods:dt];
     [self updateCollisions:dt];
+    [self updateBackground:dt];
 }
 
 #pragma mark - Apple Sample code for accelerometer
