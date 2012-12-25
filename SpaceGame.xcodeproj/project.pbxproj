@@ -14,6 +14,8 @@
 		842AB5EC168946BD009FAC45 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 842AB5EB168946BD009FAC45 /* Icon@2x.png */; };
 		842AB5EE168946C4009FAC45 /* Icon-iPad.png in Resources */ = {isa = PBXBuildFile; fileRef = 842AB5ED168946C4009FAC45 /* Icon-iPad.png */; };
 		842AB5F0168946C7009FAC45 /* Icon-iPad@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 842AB5EF168946C7009FAC45 /* Icon-iPad@2x.png */; };
+		848C78AB168969D200FCCCF6 /* Common.m in Sources */ = {isa = PBXBuildFile; fileRef = 848C78AA168969D200FCCCF6 /* Common.m */; };
+		848C78BA16896D5D00FCCCF6 /* SpriteArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 848C78B916896D5D00FCCCF6 /* SpriteArray.m */; };
 		84B6859816872B0D0054D649 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B6859716872B0D0054D649 /* QuartzCore.framework */; };
 		84B6859A16872B0D0054D649 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B6859916872B0D0054D649 /* OpenGLES.framework */; };
 		84B6859C16872B0D0054D649 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B6859B16872B0D0054D649 /* OpenAL.framework */; };
@@ -250,6 +252,10 @@
 		842AB5EB168946BD009FAC45 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
 		842AB5ED168946C4009FAC45 /* Icon-iPad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-iPad.png"; sourceTree = "<group>"; };
 		842AB5EF168946C7009FAC45 /* Icon-iPad@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-iPad@2x.png"; sourceTree = "<group>"; };
+		848C78A9168969D200FCCCF6 /* Common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Common.h; sourceTree = "<group>"; };
+		848C78AA168969D200FCCCF6 /* Common.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Common.m; sourceTree = "<group>"; };
+		848C78B816896D5D00FCCCF6 /* SpriteArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpriteArray.h; sourceTree = "<group>"; };
+		848C78B916896D5D00FCCCF6 /* SpriteArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpriteArray.m; sourceTree = "<group>"; };
 		84B6859316872B0D0054D649 /* SpaceGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpaceGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		84B6859716872B0D0054D649 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		84B6859916872B0D0054D649 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
@@ -742,6 +748,10 @@
 				84B687C416872B100054D649 /* AppDelegate.mm */,
 				84B6886816872ECC0054D649 /* ActionLayer.h */,
 				84B6886916872ECC0054D649 /* ActionLayer.m */,
+				848C78B816896D5D00FCCCF6 /* SpriteArray.h */,
+				848C78B916896D5D00FCCCF6 /* SpriteArray.m */,
+				848C78A9168969D200FCCCF6 /* Common.h */,
+				848C78AA168969D200FCCCF6 /* Common.m */,
 				84B687C916872B100054D649 /* IntroLayer.h */,
 				84B687CA16872B100054D649 /* IntroLayer.mm */,
 				84B687CC16872B100054D649 /* GLES-Render.h */,
@@ -1694,6 +1704,8 @@
 				84B6883416872C8A0054D649 /* CCParallaxNode-Extras.m in Sources */,
 				84B6883516872C8A0054D649 /* ShapeCache.mm in Sources */,
 				84B6886A16872ECC0054D649 /* ActionLayer.m in Sources */,
+				848C78AB168969D200FCCCF6 /* Common.m in Sources */,
+				848C78BA16896D5D00FCCCF6 /* SpriteArray.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

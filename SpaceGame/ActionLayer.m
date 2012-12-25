@@ -7,7 +7,9 @@
 //
 
 #import "ActionLayer.h"
+#import "Common.h"
 #import "SimpleAudioEngine.h"
+#import "SpriteArray.h"
 
 @implementation ActionLayer {
     CCLabelBMFont *_titleLabel1;
@@ -16,6 +18,9 @@
     CCSpriteBatchNode *_batchNode;
     CCSprite *_ship;
     float _shipPointsPerSecY;
+    double _nextAsteroidSpawn;
+    SpriteArray *_asteroidsArray;
+    SpriteArray *_laserArray;
 }
 
 +(id)scene {
@@ -28,6 +33,10 @@
 
 -(void)removeNode:(CCNode *)sender {
     [sender removeFromParent];
+}
+
+- (void)invisNode:(CCNode *)sender {
+    sender.visible = FALSE;
 }
 
 -(void)spawnShip {
@@ -137,6 +146,15 @@
     [[CCSpriteFrameCache sharedSpriteFrameCache]addSpriteFramesWithFile:@"Sprites.plist"];
 }
 
+-(void)setupArrays {
+    _asteroidsArray = [[SpriteArray alloc]initWithCapacity:30
+                                           spriteFrameName:@"asteroid.png"
+                                                 batchNode:_batchNode];
+    _laserArray = [[SpriteArray alloc]initWithCapacity:15
+                                       spriteFrameName:@"laserbeam_blue.png"
+                                             batchNode:_batchNode];
+}
+
 - (id)init
 {
     self = [super init];
@@ -147,6 +165,8 @@
         [self setupBatchNode];
         [self setAccelerometerEnabled:YES];
         [self scheduleUpdate];
+        [self setupArrays];
+        [self setTouchEnabled:YES];
     }
     return self;
 }
@@ -163,8 +183,67 @@
     _ship.position = ccp(_ship.position.x, newY);
 }
 
+-(void)updateAsteriods:(ccTime)dt {
+    CGSize winSize = [CCDirector sharedDirector].winSize;
+    //Is it time to spawn an asteroid?
+    double curTime = CACurrentMediaTime();
+    if (curTime > _nextAsteroidSpawn) {
+        //Figure out the next time to spawn an asteroid
+        float randSecs = randomValueBetween(0.20, 1.0);
+        _nextAsteroidSpawn = randSecs + curTime;
+        
+        //Figure out a rand Y value to spawn at
+        float randY = randomValueBetween(0.0, winSize.height);
+        
+        //Figure out a random amount of time to move from right to left
+        float randDuration = randomValueBetween(2.0, 10.0);
+        
+        //Create a new asteroid sprite
+        CCSprite *asteroid = [_asteroidsArray nextSprite];
+        [asteroid stopAllActions];
+        asteroid.visible = YES;
+        
+        asteroid.position = ccp(winSize.width+asteroid.contentSize.width/2, randY);
+        
+        //set size to be one of 3 random sizes
+        int randNum = arc4random() % 3;
+        if (randNum == 0) {
+            asteroid.scale = 0.25;
+        } else if (randNum == 1) {
+            asteroid.scale = 0.5;
+        } else {
+            asteroid.scale = 1.0;
+        }
+        
+        [asteroid runAction:[CCSequence actions:
+                             [CCMoveBy actionWithDuration:randDuration position:ccp(-winSize.width-asteroid.contentSize.width, 0)],
+                             [CCCallFuncN actionWithTarget:self selector:@selector(invisNode:)],
+                             nil]];
+    }
+}
+
+-(void)updateCollisions:(ccTime)dt {
+    for (CCSprite *laser in _laserArray.array) {
+        if (!laser.visible) continue;
+        
+        for (CCSprite *asteroid in _asteroidsArray.array) {
+            if (!asteroid.visible) continue;
+            
+            if (CGRectIntersectsRect(asteroid.boundingBox, laser.boundingBox)) {
+                [[SimpleAudioEngine sharedEngine] playEffect:@"explosion_large.caf"
+                                                       pitch:1.0f pan:0.0f gain:0.25f];
+                asteroid.visible = NO;
+                laser.visible = NO;
+                break;
+            }
+        }
+    }
+}
+
 - (void)update:(ccTime)dt {
     [self updateShipPos:dt];
+    [self updateAsteriods:dt];
+    [self updateCollisions:dt];
 }
 
 #pragma mark - Apple Sample code for accelerometer
@@ -180,8 +259,8 @@
     rollingZ = (acceleration.z * kFilteringFactor) +
     (rollingZ * (1.0 - kFilteringFactor));
     float accelX = rollingX;
-    float accelY = rollingY;
-    float accelZ = rollingZ;
+//    float accelY = rollingY;
+//    float accelZ = rollingZ;
 //    NSLog(@"accelX: %f, accelY: %f, accelZ: %f",
 //          accelX, accelY, accelZ);
     
@@ -194,6 +273,27 @@
     float accelFractionX = accelDiffX / kMaxDiffX;
     float pointsPerSecX = kShipMaxPointsPerSec * accelFractionX;
     _shipPointsPerSecY = pointsPerSecX;
+}
+
+#pragma mark - Touches
+
+-(void)ccTouchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+    CGSize winSize = [CCDirector sharedDirector].winSize;
+    
+    [[SimpleAudioEngine sharedEngine]playEffect:@"laser_ship.caf" pitch:1.0f pan:0.0f gain:0.25f];
+    
+    CCSprite *shipLaser = [_laserArray nextSprite];
+    [shipLaser stopAllActions];
+    shipLaser.visible = YES;
+    
+    shipLaser.position = ccpAdd(_ship.position, ccp(shipLaser.contentSize.width/2, 0));
+    
+    [shipLaser runAction:[CCSequence actions:
+                          [CCMoveBy actionWithDuration:0.5
+                                              position:ccp(winSize.width, 0)],
+                          [CCCallFuncN actionWithTarget:self
+                                               selector:@selector(invisNode:)],
+                          nil]];
 }
 
 @end
