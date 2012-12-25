@@ -11,6 +11,8 @@
 #import "SimpleAudioEngine.h"
 #import "SpriteArray.h"
 #import "CCParallaxNode-Extras.h"
+#import "Box2D.h"
+#import "GLES-Render.h"
 
 @implementation ActionLayer {
     CCLabelBMFont *_titleLabel1;
@@ -29,6 +31,8 @@
     CCSprite * _galaxy;
     CCSprite * _spacialanomaly;
     CCSprite * _spacialanomaly2;
+    b2World *_world;
+    GLESDebugDraw *_debugDraw;
 }
 
 +(id)scene {
@@ -205,13 +209,46 @@
     [_backgroundNode addChild:_spacialanomaly2 z:-1
                 parallaxRatio:bgSpeed
                positionOffset:ccp(1500,winSize.height * 0.9)];
+}
 
+-(void)setupWorld {
+    b2Vec2 gravity = b2Vec2(0.0f, 0.0f);
+    _world = new b2World(gravity);
+}
+
+-(void)setupDebugDraw {
+    _debugDraw = new GLESDebugDraw(PTM_RATIO);
+    _world->SetDebugDraw(_debugDraw);
+    _debugDraw->SetFlags(b2Draw::e_shapeBit | b2Draw::e_jointBit);
+}
+
+-(void)testBox2D {
+    CGSize winSize = [CCDirector sharedDirector].winSize;
+    
+    b2BodyDef bodyDef;
+    bodyDef.type = b2_dynamicBody;
+    bodyDef.position = b2Vec2(winSize.width/2/PTM_RATIO,winSize.height/2/PTM_RATIO);
+    
+    b2Body *body = _world->CreateBody(&bodyDef);
+    
+    b2CircleShape circleShape;
+    circleShape.m_radius = 0.25;
+    b2FixtureDef fixtureDef;
+    fixtureDef.shape = &circleShape;
+    fixtureDef.density = 1.0;
+    body->CreateFixture(&fixtureDef);
+    
+    body->ApplyAngularImpulse(0.01);
 }
 
 - (id)init
 {
     self = [super init];
     if (self) {
+        [self setupWorld];
+        [self setupDebugDraw];
+        [self testBox2D];
+        
         [self setupTitle];
         [self setupSound];
         [self setupStars];
@@ -221,6 +258,7 @@
         [self setupArrays];
         [self setTouchEnabled:YES];
         [self setupBackground];
+
     }
     return self;
 }
@@ -324,11 +362,27 @@
     }
 }
 
+- (void)updateBox2D:(ccTime)dt {
+    _world->Step(dt, 1, 1);
+}
+
 - (void)update:(ccTime)dt {
     [self updateShipPos:dt];
     [self updateAsteriods:dt];
     [self updateCollisions:dt];
     [self updateBackground:dt];
+    [self updateBox2D:dt];
+}
+
+#pragma mark - Debug Drawing
+
+-(void)draw
+{
+    [super draw];
+    ccGLEnableVertexAttribs(kCCVertexAttribFlag_Position);
+    kmGLPushMatrix();
+    _world->DrawDebugData();
+    kmGLPopMatrix();
 }
 
 #pragma mark - Apple Sample code for accelerometer
