@@ -17,6 +17,7 @@
 		84426A87168B24890031FFA2 /* GameObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84426A86168B24890031FFA2 /* GameObject.mm */; };
 		846FA41E1689CC9B0046585C /* SpriteArray.mm in Sources */ = {isa = PBXBuildFile; fileRef = 846FA41D1689CC9B0046585C /* SpriteArray.mm */; };
 		848C78AB168969D200FCCCF6 /* Common.mm in Sources */ = {isa = PBXBuildFile; fileRef = 848C78AA168969D200FCCCF6 /* Common.mm */; };
+		848D681E168C7EE50066BE35 /* ParticleSystemArray.m in Sources */ = {isa = PBXBuildFile; fileRef = 848D681D168C7EE50066BE35 /* ParticleSystemArray.m */; };
 		84B6859816872B0D0054D649 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B6859716872B0D0054D649 /* QuartzCore.framework */; };
 		84B6859A16872B0D0054D649 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B6859916872B0D0054D649 /* OpenGLES.framework */; };
 		84B6859C16872B0D0054D649 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B6859B16872B0D0054D649 /* OpenAL.framework */; };
@@ -257,6 +258,8 @@
 		848C78A9168969D200FCCCF6 /* Common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Common.h; sourceTree = "<group>"; };
 		848C78AA168969D200FCCCF6 /* Common.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Common.mm; sourceTree = "<group>"; };
 		848C78B816896D5D00FCCCF6 /* SpriteArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpriteArray.h; sourceTree = "<group>"; };
+		848D681C168C7EE50066BE35 /* ParticleSystemArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParticleSystemArray.h; sourceTree = "<group>"; };
+		848D681D168C7EE50066BE35 /* ParticleSystemArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ParticleSystemArray.m; sourceTree = "<group>"; };
 		84B6859316872B0D0054D649 /* SpaceGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpaceGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		84B6859716872B0D0054D649 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		84B6859916872B0D0054D649 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
@@ -751,6 +754,8 @@
 				84B6886916872ECC0054D649 /* ActionLayer.mm */,
 				848C78B816896D5D00FCCCF6 /* SpriteArray.h */,
 				846FA41D1689CC9B0046585C /* SpriteArray.mm */,
+				848D681C168C7EE50066BE35 /* ParticleSystemArray.h */,
+				848D681D168C7EE50066BE35 /* ParticleSystemArray.m */,
 				848C78A9168969D200FCCCF6 /* Common.h */,
 				848C78AA168969D200FCCCF6 /* Common.mm */,
 				84B687C916872B100054D649 /* IntroLayer.h */,
@@ -1704,6 +1709,7 @@
 				848C78AB168969D200FCCCF6 /* Common.mm in Sources */,
 				846FA41E1689CC9B0046585C /* SpriteArray.mm in Sources */,
 				84426A87168B24890031FFA2 /* GameObject.mm in Sources */,
+				848D681E168C7EE50066BE35 /* ParticleSystemArray.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
