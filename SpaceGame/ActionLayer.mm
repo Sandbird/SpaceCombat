@@ -17,6 +17,7 @@
 #import "ShapeCache.h"
 #import "SimpleContactListener.h"
 #import "ParticleSystemArray.h"
+#import "LevelManager.h"
 
 enum GameStage {
     GameStageTitle = 0,
@@ -52,13 +53,16 @@ enum GameStage {
     ParticleSystemArray *_explosions;
     GameStage _gameStage;
     BOOL _gameOver;
-    double _gameWonTime;
+ //   double _gameWonTime;
+    LevelManager *_levelManager;
+    CCLabelBMFont *_levelIntroLabel1;
+    CCLabelBMFont *_levelIntroLabel2;
 }
 
 -(void)endScene:(BOOL)win {
     if (_gameOver) return;
     _gameOver = TRUE;
-    _gameStage = GameStageDone;
+//    _gameStage = GameStageDone;
     
     CGSize winSize = [CCDirector sharedDirector].winSize;
     
@@ -149,7 +153,9 @@ enum GameStage {
     
     [self spawnShip];
     
-    _gameStage = GameStageAsteroids;
+//    _gameStage = GameStageAsteroids;
+    [_levelManager nextStage];
+    [self newStageStarted];
 }
 
 -(void)setupTitle {
@@ -324,6 +330,10 @@ enum GameStage {
     [[ShapeCache sharedShapeCache] addShapesWithFile:@"Shapes.plist"];
 }
 
+-(void)setupLevelManager {
+    _levelManager = [[LevelManager alloc]init];
+}
+
 - (id)init
 {
     self = [super init];
@@ -343,8 +353,9 @@ enum GameStage {
         [self setTouchEnabled:YES];
         [self setupBackground];
         
-        double curTime = CACurrentMediaTime();
-        _gameWonTime = curTime + 30.0;
+//        double curTime = CACurrentMediaTime();
+//        _gameWonTime = curTime + 30.0;
+        [self setupLevelManager];
     }
     return self;
 }
@@ -362,21 +373,27 @@ enum GameStage {
 }
 
 -(void)updateAsteriods:(ccTime)dt {
-    if (_gameStage != GameStageAsteroids) return;
+//    if (_gameStage != GameStageAsteroids) return;
+    if (_levelManager.gameState != GameStateNormal) return;
+    if (![_levelManager boolForProp:@"SpawnAsteroids"]) return;
     
     CGSize winSize = [CCDirector sharedDirector].winSize;
     //Is it time to spawn an asteroid?
     double curTime = CACurrentMediaTime();
     if (curTime > _nextAsteroidSpawn) {
         //Figure out the next time to spawn an asteroid
-        float randSecs = randomValueBetween(0.20, 1.0);
+        float spawnSecsLow = [_levelManager floatForProp:@"ASpawnSecsLow"];
+        float spawnSecsHigh = [_levelManager floatForProp:@"ASpawnSecsHigh"];
+        float randSecs = randomValueBetween(spawnSecsLow, spawnSecsHigh);
         _nextAsteroidSpawn = randSecs + curTime;
         
         //Figure out a rand Y value to spawn at
         float randY = randomValueBetween(0.0, winSize.height);
         
         //Figure out a random amount of time to move from right to left
-        float randDuration = randomValueBetween(2.0, 10.0);
+        float moveDurationLow = [_levelManager floatForProp:@"AMoveDurationLow"];
+        float moveDurationHigh = [_levelManager floatForProp:@"AMoveDurationHigh"];
+        float randDuration = randomValueBetween(moveDurationLow, moveDurationHigh);
         
         //Create a new asteroid sprite
         GameObject *asteroid = [_asteroidsArray nextSprite];
@@ -505,6 +522,7 @@ enum GameStage {
                 [enemyShip destroy];
                 [_ship takeHit];
                 if (_ship.dead) {
+                    _levelManager.gameState = GameStateDone;
                     [self endScene:NO];
                 }
             }
@@ -579,6 +597,57 @@ enum GameStage {
     }
 }
 
+-(void)updateLevel:(ccTime)dt {
+    BOOL newStage = [_levelManager update];
+    if (newStage) {
+        [self newStageStarted];
+    }
+}
+
+-(void)doLevelIntro {
+    CGSize winSize = [CCDirector sharedDirector].winSize;
+    NSString *message1 = [NSString stringWithFormat:@"Level %d",
+                          _levelManager.curLevelIdx+1];
+    NSString *message2 = [_levelManager stringForProp:@"LText"];
+    _levelIntroLabel1 = [CCLabelBMFont labelWithString:message1
+                                               fntFile:@"SpaceGameFont.fnt"];
+    _levelIntroLabel1.scale = 0;
+    _levelIntroLabel1.position = ccp(winSize.width/2, winSize.height * 0.6);
+    [self addChild:_levelIntroLabel1 z:100];
+    [_levelIntroLabel1 runAction:
+     [CCSequence actions:
+      [CCEaseOut actionWithAction:
+       [CCScaleTo actionWithDuration:0.5 scale:0.5] rate:4.0],
+      [CCDelayTime actionWithDuration:3.0],
+      [CCEaseOut actionWithAction:
+       [CCScaleTo actionWithDuration:0.5 scale:0] rate:4.0],
+      [CCCallFuncN actionWithTarget:self selector:@selector(removeNode:)],
+      nil]];
+    _levelIntroLabel2 = [CCLabelBMFont labelWithString:message2
+                                               fntFile:@"SpaceGameFont.fnt"];
+    _levelIntroLabel2.position = ccp(winSize.width/2, winSize.height * 0.4);
+    _levelIntroLabel2.scale = 0;
+    [self addChild:_levelIntroLabel2 z:100];
+    [_levelIntroLabel2 runAction:
+     [CCSequence actions:
+      [CCEaseOut actionWithAction:
+       [CCScaleTo actionWithDuration:0.5 scale:0.5] rate:4.0],
+      [CCDelayTime actionWithDuration:3.0],
+      [CCEaseOut actionWithAction:
+       [CCScaleTo actionWithDuration:0.5 scale:0] rate:4.0],
+      [CCCallFuncN actionWithTarget:self selector:@selector(removeNode:)],
+      nil]];
+}
+
+-(void)newStageStarted {
+    if (_levelManager.gameState == GameStateDone) {
+        [self endScene:YES];
+    }
+    else if ([_levelManager boolForProp:@"SpawnLevelIntro"]) {
+        [self doLevelIntro];
+    }
+}
+
 - (void)update:(ccTime)dt {
     [self updateShipPos:dt];
     [self updateAsteriods:dt];
@@ -586,9 +655,10 @@ enum GameStage {
     [self updateBackground:dt];
     [self updateBox2D:dt];
     
-    if (CACurrentMediaTime() > _gameWonTime) {
-        [self endScene:YES];
-    }
+//    if (CACurrentMediaTime() > _gameWonTime) {
+//        [self endScene:YES];
+//    }
+    [self updateLevel:dt];
 }
 
 #pragma mark - Debug Drawing
