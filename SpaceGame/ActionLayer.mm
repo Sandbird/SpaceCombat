@@ -57,6 +57,17 @@ enum GameStage {
     LevelManager *_levelManager;
     CCLabelBMFont *_levelIntroLabel1;
     CCLabelBMFont *_levelIntroLabel2;
+    SpriteArray *_alienArray;
+    double _nextAlienSpawn;
+    double _numAlienSpawns;
+    CGPoint _alienSpawnStart;
+    ccBezierConfig _bezierConfig;
+    double _nextShootChance;
+    SpriteArray *_enemyLasers;
+    SpriteArray *_powerups;
+    double _nextPowerupSpawn;
+    BOOL _invincible;
+    ParticleSystemArray *_boostEffects;
 }
 
 -(void)endScene:(BOOL)win {
@@ -248,6 +259,28 @@ enum GameStage {
     _explosions = [[ParticleSystemArray alloc]initWithFile:@"Explosion.plist"
                                                   capacity:3
                                                     parent:self];
+    
+    _alienArray = [[SpriteArray alloc]initWithCapacity:15
+                                       spriteFrameName:@"enemy_spaceship.png"
+                                             batchNode:_batchNode
+                                                 world:_world
+                                             shapeName:@"enemy_spaceship"
+                                                 maxHp:1];
+    _enemyLasers = [[SpriteArray alloc]initWithCapacity:15
+                                        spriteFrameName:@"laserbeam_red.png"
+                                              batchNode:_batchNode
+                                                  world:_world
+                                              shapeName:@"laserbeam_red"
+                                                  maxHp:1];
+    _powerups = [[SpriteArray alloc]initWithCapacity:1
+                                     spriteFrameName:@"powerup.png"
+                                           batchNode:_batchNode
+                                               world:_world
+                                           shapeName:@"powerup"
+                                               maxHp:1];
+    _boostEffects = [[ParticleSystemArray alloc]initWithFile:@"Boost.plist"
+                                                    capacity:1
+                                                      parent:self];
 }
 
 -(void)setupBackground {
@@ -434,6 +467,13 @@ enum GameStage {
     [self runAction:shakeAction];
 }
 
+-(void)boostDone {
+    _invincible = NO;
+    for (CCParticleSystemQuad *boostEffect in _boostEffects.array) {
+        [boostEffect stopSystem];
+    }
+}
+
 -(void)beginContact:(b2Contact *)contact {
     b2Fixture *fixtureA = contact->GetFixtureA();
     b2Fixture *fixtureB = contact->GetFixtureB();
@@ -442,6 +482,8 @@ enum GameStage {
     GameObject *spriteA = (__bridge GameObject *) bodyA->GetUserData();
     GameObject *spriteB = (__bridge GameObject *) bodyB->GetUserData();
     if (!spriteA.visible || !spriteB.visible) return;
+    
+    CGSize winSize = [CCDirector sharedDirector].winSize;
     
     b2WorldManifold manifold;
     contact->GetWorldManifold(&manifold);
@@ -520,11 +562,53 @@ enum GameStage {
                 explosion.position = contactPoint;
                 [explosion resetSystem];
                 [enemyShip destroy];
-                [_ship takeHit];
+                
+                if (!_invincible) {
+                    [_ship takeHit];
+                }
+                
                 if (_ship.dead) {
                     _levelManager.gameState = GameStateDone;
                     [self endScene:NO];
                 }
+            }
+        }
+    
+    if ((fixtureA->GetFilterData().categoryBits &
+         kCategoryShip &&
+         fixtureB->GetFilterData().categoryBits &
+         kCategoryPowerup) ||
+        (fixtureB->GetFilterData().categoryBits &
+         kCategoryShip &&
+         fixtureA->GetFilterData().categoryBits &
+         kCategoryPowerup)) {
+            // Determine power up
+            GameObject *powerUp = (GameObject*) spriteA;
+            if (fixtureB->GetFilterData().categoryBits & kCategoryPowerup) {
+                powerUp = spriteB;
+            }
+            if (!powerUp.dead) {
+                [[SimpleAudioEngine sharedEngine] playEffect:@"powerup.caf" pitch:1.0 pan:0.0
+                                                        gain:1.0];
+                [powerUp destroy];
+                float scaleDuration = 1.0;
+                float waitDuration = 5.0;
+                _invincible = YES;
+                CCParticleSystemQuad *boostEffect = [_boostEffects nextParticleSystem];
+                [boostEffect resetSystem];
+                [_ship runAction:
+                 [CCSequence actions:
+                  [CCMoveBy actionWithDuration:scaleDuration position:ccp(winSize.width * 0.6, 0)],
+                  [CCDelayTime actionWithDuration:waitDuration],
+                  [CCMoveBy actionWithDuration:scaleDuration position:ccp(-winSize.width * 0.6, 0)],
+                  nil]];
+                [self runAction:
+                 [CCSequence actions:
+                  [CCScaleTo actionWithDuration:scaleDuration scale:0.75],
+                  [CCDelayTime actionWithDuration:waitDuration],
+                  [CCScaleTo actionWithDuration:scaleDuration scale:1.0],
+                  [CCCallFunc actionWithTarget:self selector:@selector(boostDone)],
+                  nil]];
             }
         }
 }
@@ -648,6 +732,109 @@ enum GameStage {
     }
 }
 
+-(void)shootEnemyLaserFromPosition:(CGPoint)position {
+    CGSize winSize = [CCDirector sharedDirector].winSize;
+    GameObject *shipLaser = [_enemyLasers nextSprite];
+    
+    [[SimpleAudioEngine sharedEngine]playEffect:@"laser_enemy.caf" pitch:1.0f pan:0.0f gain:0.25f];
+    shipLaser.position = position;
+    [shipLaser revive];
+    [shipLaser stopAllActions];
+    [shipLaser runAction:[CCSequence actions:
+                          [CCMoveBy actionWithDuration:2.0 position:ccp(-winSize.width, 0)],
+                          [CCCallFuncN actionWithTarget:self selector:@selector(invisNode:)],
+                          nil]];
+}
+
+-(void)updateAlienSwarm:(ccTime)dt {
+    if (_levelManager.gameState != GameStateNormal) return;
+    if (![_levelManager hasProp:@"SpawnAlienSwarm"]) return;
+    
+    CGSize winSize = [CCDirector sharedDirector].winSize;
+    
+    double curTime = CACurrentMediaTime();
+    if (curTime > _nextAlienSpawn) {
+        if (_numAlienSpawns == 0) {
+            CGPoint pos1 = ccp(winSize.width*1.3,
+                               randomValueBetween(0, winSize.height * 0.1));
+            
+            CGPoint cp1 = ccp(randomValueBetween(winSize.width*0.1,winSize.width*0.6),
+                              randomValueBetween(0, winSize.height*0.3));
+            
+            CGPoint pos2 = ccp(winSize.width*1.3,
+                               randomValueBetween(winSize.height*0.9,
+                                                  winSize.height*1.0));
+            
+            CGPoint cp2 = ccp(randomValueBetween(winSize.width*0.1,
+                                                 winSize.width*0.6),
+                              randomValueBetween(winSize.height*0.7,
+                                                 winSize.height*1.0));
+            
+            _numAlienSpawns = arc4random() %20 + 1;
+            if (arc4random() % 2 == 0) {
+                _alienSpawnStart = pos1;
+                _bezierConfig.controlPoint_1 = cp1;
+                _bezierConfig.controlPoint_2 = cp2;
+                _bezierConfig.endPosition = pos2;
+            } else {
+                _alienSpawnStart = pos2;
+                _bezierConfig.controlPoint_1 = cp2;
+                _bezierConfig.controlPoint_2 = cp1;
+                _bezierConfig.endPosition = pos1;
+            }
+            
+            _nextAlienSpawn = curTime + 1.0;
+        } else {
+            _nextAlienSpawn = curTime + 0.3;
+            _numAlienSpawns -= 1;
+            
+            GameObject *alien = [_alienArray nextSprite];
+            alien.position = _alienSpawnStart;
+            [alien revive];
+            
+            [alien runAction:[CCBezierTo actionWithDuration:3.0 bezier:_bezierConfig]];
+        }
+    }
+    
+    if (curTime > _nextShootChance) {
+        _nextShootChance = curTime + 0.1;
+        
+        for (GameObject *alien in _alienArray.array) {
+            if (alien.visible) {
+                if (arc4random() % 40 == 0) {
+                    [self shootEnemyLaserFromPosition:alien.position];
+                }
+            }
+        }
+    }
+}
+
+-(void)updatePowerups:(ccTime)dt {
+    if (_levelManager.gameState != GameStateNormal) return;
+    if (![_levelManager boolForProp:@"SpawnPowerups"]) return;
+    
+    CGSize winSize = [CCDirector sharedDirector].winSize;
+    
+    double curTime = CACurrentMediaTime();
+    if (curTime > _nextPowerupSpawn) {
+        _nextPowerupSpawn = curTime + [_levelManager floatForProp:@"PSpawnSecs"];
+        
+        GameObject *powerup = [_powerups nextSprite];
+        powerup.position = ccp(winSize.width, randomValueBetween(0, winSize.height));
+        [powerup revive];
+        [powerup runAction:[CCSequence actions:
+                            [CCMoveBy actionWithDuration:5.0 position:ccp(-winSize.width*1.5, 0)],
+                            [CCCallFuncN actionWithTarget:self selector:@selector(invisNode:)],
+                            nil]];
+    }
+}
+
+-(void)updateBoostEffects:(ccTime)dt {
+    for (CCParticleSystemQuad *particleSystem in _boostEffects.array) {
+        particleSystem.position = _ship.position;
+    }
+}
+
 - (void)update:(ccTime)dt {
     [self updateShipPos:dt];
     [self updateAsteriods:dt];
@@ -659,6 +846,9 @@ enum GameStage {
 //        [self endScene:YES];
 //    }
     [self updateLevel:dt];
+    [self updateAlienSwarm:dt];
+    [self updatePowerups:dt];
+    [self updateBoostEffects:dt];
 }
 
 #pragma mark - Debug Drawing
@@ -670,6 +860,18 @@ enum GameStage {
     kmGLPushMatrix();
 //    _world->DrawDebugData();
     kmGLPopMatrix();
+    
+//    if (_levelManager.gameState == GameStateNormal &&
+//        [_levelManager boolForProp:@"SpawnAlienSwarm"]) {
+//        ccDrawCubicBezier(_alienSpawnStart,
+//                          _bezierConfig.controlPoint_1,
+//                          _bezierConfig.controlPoint_2,
+//                          _bezierConfig.endPosition, 16);
+//        ccDrawLine(_alienSpawnStart,
+//                   _bezierConfig.controlPoint_1);
+//        ccDrawLine(_bezierConfig.endPosition,
+//                   _bezierConfig.controlPoint_2);
+//    }
 }
 
 #pragma mark - Apple Sample code for accelerometer

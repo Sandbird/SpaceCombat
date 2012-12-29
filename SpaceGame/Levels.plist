@@ -17,7 +17,7 @@
 				<key>SpawnAsteroids</key>
 				<true/>
 				<key>Duration</key>
-				<integer>15</integer>
+				<integer>5</integer>
 				<key>AMoveDurationHigh</key>
 				<integer>10</integer>
 				<key>AMoveDurationLow</key>
@@ -30,8 +30,12 @@
 			<dict>
 				<key>SpawnAsteroids</key>
 				<true/>
+				<key>SpawnPowerups</key>
+				<true/>
+                                <key>PSpawnSecs</key>
+				<integer>10</integer>
 				<key>Duration</key>
-				<integer>15</integer>
+				<integer>5</integer>
 				<key>AMoveDurationHigh</key>
 				<integer>3</integer>
 				<key>AMoveDurationLow</key>
@@ -45,7 +49,7 @@
 				<key>SpawnAsteroids</key>
 				<true/>
 				<key>Duration</key>
-				<integer>15</integer>
+				<integer>5</integer>
 				<key>AMoveDurationHigh</key>
 				<integer>7</integer>
 				<key>AMoveDurationLow</key>
@@ -54,6 +58,36 @@
 				<real>0.4</real>
 				<key>ASpawnSecsLow</key>
 				<real>0.2</real>
+			</dict>
+		</array>
+		<array>
+			<dict>
+				<key>SpawnLevelIntro</key>
+				<true/>
+				<key>Duration</key>
+				<integer>2</integer>
+				<key>LText</key>
+				<string>Uber Nova</string>
+			</dict>
+			<dict>
+				<key>SpawnAlienSwarm</key>
+				<true/>
+				<key>Duration</key>
+				<integer>30</integer>
+				<key>SpawnAsteroids</key>
+				<true/>
+				<key>SpawnPowerups</key>
+				<true/>
+                                <key>PSpawnSecs</key>
+				<integer>20</integer>
+				<key>AMoveDurationHigh</key>
+				<integer>10</integer>
+				<key>AMoveDurationLow</key>
+				<integer>2</integer>
+				<key>ASpawnSecsHigh</key>
+				<integer>3</integer>
+				<key>ASpawnSecsLow</key>
+				<integer>1</integer>
 			</dict>
 		</array>
 	</array>
