@@ -14,7 +14,7 @@
     int _nextItem;
 }
 
--(id)initWithCapacity:(int)capacity spriteFrameName:(NSString *)spriteFrameName batchNode:(CCSpriteBatchNode *)batchNode world:(b2World *)world shapeName:(NSString *)shapeName maxHp:(int)maxHp
+-(id)initWithCapacity:(int)capacity spriteFrameName:(NSString *)spriteFrameName batchNode:(CCSpriteBatchNode *)batchNode world:(b2World *)world shapeName:(NSString *)shapeName maxHp:(int)maxHp healthBarType:(HealthBarType)healthBarType
 {
     if ((self = [super init])) {
         _array = [[CCArray alloc]initWithCapacity:capacity];
@@ -22,7 +22,8 @@
             GameObject *sprite = [[GameObject alloc]initWithSpriteFrameName:spriteFrameName
                                                                       world:world
                                                                   shapeName:shapeName
-                                                                      maxHp:maxHp];
+                                                                      maxHp:maxHp
+                                                              healthBarType:healthBarType];
             sprite.visible = NO;
             [batchNode addChild:sprite];
             [_array addObject:sprite];

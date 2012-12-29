@@ -25,6 +25,8 @@ enum GameStage {
     GameStageDone
 };
 
+
+
 #define kCategoryShip 0x1
 #define kCategoryShipLaser 0x2
 #define kCategoryEnemy 0x4
@@ -68,6 +70,8 @@ enum GameStage {
     double _nextPowerupSpawn;
     BOOL _invincible;
     ParticleSystemArray *_boostEffects;
+    
+
 }
 
 -(void)endScene:(BOOL)win {
@@ -131,7 +135,8 @@ enum GameStage {
     _ship = [[GameObject alloc]initWithSpriteFrameName:@"SpaceFlier_sm_1.png"
                                                  world:_world
                                              shapeName:@"SpaceFlier_sm_1"
-                                                 maxHp:10];
+                                                 maxHp:10
+                                         healthBarType:HealthBarTypeGreen];
     
     _ship.position = ccp(-_ship.contentSize.width/2, winSize.height * 0.5);
     [_ship revive];
@@ -247,14 +252,16 @@ enum GameStage {
                                                  batchNode:_batchNode
                                                      world:_world
                                                  shapeName:@"asteroid"
-                                                     maxHp:1];
+                                                     maxHp:1
+                                             healthBarType:HealthBarTypeNone];
     
     _laserArray = [[SpriteArray alloc]initWithCapacity:15
                                        spriteFrameName:@"laserbeam_blue.png"
                                              batchNode:_batchNode
                                                  world:_world
                                              shapeName:@"laserbeam_blue"
-                                                 maxHp:1];
+                                                 maxHp:1
+                                         healthBarType:HealthBarTypeNone];
     
     _explosions = [[ParticleSystemArray alloc]initWithFile:@"Explosion.plist"
                                                   capacity:3
@@ -265,19 +272,25 @@ enum GameStage {
                                              batchNode:_batchNode
                                                  world:_world
                                              shapeName:@"enemy_spaceship"
-                                                 maxHp:1];
+                                                 maxHp:1
+                                         healthBarType:HealthBarTypeNone];
+    
     _enemyLasers = [[SpriteArray alloc]initWithCapacity:15
                                         spriteFrameName:@"laserbeam_red.png"
                                               batchNode:_batchNode
                                                   world:_world
                                               shapeName:@"laserbeam_red"
-                                                  maxHp:1];
+                                                  maxHp:1
+                                          healthBarType:HealthBarTypeNone];
+    
     _powerups = [[SpriteArray alloc]initWithCapacity:1
                                      spriteFrameName:@"powerup.png"
                                            batchNode:_batchNode
                                                world:_world
                                            shapeName:@"powerup"
-                                               maxHp:1];
+                                               maxHp:1
+                                       healthBarType:HealthBarTypeNone];
+    
     _boostEffects = [[ParticleSystemArray alloc]initWithFile:@"Boost.plist"
                                                     capacity:1
                                                       parent:self];
