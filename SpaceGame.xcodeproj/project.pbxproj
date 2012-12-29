@@ -14,6 +14,8 @@
 		842AB5EC168946BD009FAC45 /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 842AB5EB168946BD009FAC45 /* Icon@2x.png */; };
 		842AB5EE168946C4009FAC45 /* Icon-iPad.png in Resources */ = {isa = PBXBuildFile; fileRef = 842AB5ED168946C4009FAC45 /* Icon-iPad.png */; };
 		842AB5F0168946C7009FAC45 /* Icon-iPad@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 842AB5EF168946C7009FAC45 /* Icon-iPad@2x.png */; };
+		842E8C04168E8D0C00623E0E /* BossShip.mm in Sources */ = {isa = PBXBuildFile; fileRef = 842E8C03168E8D0C00623E0E /* BossShip.mm */; };
+		842E8C09168E928100623E0E /* Levels.plist in Resources */ = {isa = PBXBuildFile; fileRef = 842E8C08168E928100623E0E /* Levels.plist */; };
 		84426A87168B24890031FFA2 /* GameObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84426A86168B24890031FFA2 /* GameObject.mm */; };
 		8465FC15168DBF6E00787CA8 /* LevelManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 8465FC14168DBF6E00787CA8 /* LevelManager.m */; };
 		846FA41E1689CC9B0046585C /* SpriteArray.mm in Sources */ = {isa = PBXBuildFile; fileRef = 846FA41D1689CC9B0046585C /* SpriteArray.mm */; };
@@ -243,7 +245,6 @@
 		84B6886616872C8A0054D649 /* Sprites.plist in Resources */ = {isa = PBXBuildFile; fileRef = 84B6882316872C8A0054D649 /* Sprites.plist */; };
 		84B6886716872C8A0054D649 /* Sprites.pvr.ccz in Resources */ = {isa = PBXBuildFile; fileRef = 84B6882416872C8A0054D649 /* Sprites.pvr.ccz */; };
 		84B6886A16872ECC0054D649 /* ActionLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84B6886916872ECC0054D649 /* ActionLayer.mm */; };
-		84D23851168E70C9009A851E /* Levels.plist in Resources */ = {isa = PBXBuildFile; fileRef = 84D23850168E70C9009A851E /* Levels.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -254,6 +255,9 @@
 		842AB5EB168946BD009FAC45 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
 		842AB5ED168946C4009FAC45 /* Icon-iPad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-iPad.png"; sourceTree = "<group>"; };
 		842AB5EF168946C7009FAC45 /* Icon-iPad@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-iPad@2x.png"; sourceTree = "<group>"; };
+		842E8C02168E8D0C00623E0E /* BossShip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BossShip.h; sourceTree = "<group>"; };
+		842E8C03168E8D0C00623E0E /* BossShip.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BossShip.mm; sourceTree = "<group>"; };
+		842E8C08168E928100623E0E /* Levels.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Levels.plist; sourceTree = "<group>"; };
 		84426A85168B24890031FFA2 /* GameObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameObject.h; sourceTree = "<group>"; };
 		84426A86168B24890031FFA2 /* GameObject.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GameObject.mm; sourceTree = "<group>"; };
 		8465FC13168DBF6E00787CA8 /* LevelManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelManager.h; sourceTree = "<group>"; };
@@ -684,7 +688,6 @@
 		84B6882416872C8A0054D649 /* Sprites.pvr.ccz */ = {isa = PBXFileReference; lastKnownFileType = file; path = Sprites.pvr.ccz; sourceTree = "<group>"; };
 		84B6886816872ECC0054D649 /* ActionLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActionLayer.h; sourceTree = "<group>"; };
 		84B6886916872ECC0054D649 /* ActionLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ActionLayer.mm; sourceTree = "<group>"; };
-		84D23850168E70C9009A851E /* Levels.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Levels.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -755,6 +758,8 @@
 				84B687C416872B100054D649 /* AppDelegate.mm */,
 				84426A85168B24890031FFA2 /* GameObject.h */,
 				84426A86168B24890031FFA2 /* GameObject.mm */,
+				842E8C02168E8D0C00623E0E /* BossShip.h */,
+				842E8C03168E8D0C00623E0E /* BossShip.mm */,
 				84B6886816872ECC0054D649 /* ActionLayer.h */,
 				84B6886916872ECC0054D649 /* ActionLayer.mm */,
 				848C78B816896D5D00FCCCF6 /* SpriteArray.h */,
@@ -769,7 +774,7 @@
 				84B687CD16872B100054D649 /* GLES-Render.mm */,
 				8465FC13168DBF6E00787CA8 /* LevelManager.h */,
 				8465FC14168DBF6E00787CA8 /* LevelManager.m */,
-				84D23850168E70C9009A851E /* Levels.plist */,
+				842E8C08168E928100623E0E /* Levels.plist */,
 				84B685AA16872B0D0054D649 /* Resources */,
 				84B685C216872B0D0054D649 /* libs */,
 				84B687BF16872B100054D649 /* Supporting Files */,
@@ -1547,7 +1552,7 @@
 				842AB5EC168946BD009FAC45 /* Icon@2x.png in Resources */,
 				842AB5EE168946C4009FAC45 /* Icon-iPad.png in Resources */,
 				842AB5F0168946C7009FAC45 /* Icon-iPad@2x.png in Resources */,
-				84D23851168E70C9009A851E /* Levels.plist in Resources */,
+				842E8C09168E928100623E0E /* Levels.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1720,6 +1725,7 @@
 				84426A87168B24890031FFA2 /* GameObject.mm in Sources */,
 				848D681E168C7EE50066BE35 /* ParticleSystemArray.m in Sources */,
 				8465FC15168DBF6E00787CA8 /* LevelManager.m in Sources */,
+				842E8C04168E8D0C00623E0E /* BossShip.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

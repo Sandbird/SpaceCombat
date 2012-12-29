@@ -18,13 +18,13 @@
 #import "SimpleContactListener.h"
 #import "ParticleSystemArray.h"
 #import "LevelManager.h"
+#import "BossShip.h"
 
 enum GameStage {
     GameStageTitle = 0,
     GameStageAsteroids,
     GameStageDone
 };
-
 
 
 #define kCategoryShip 0x1
@@ -70,8 +70,9 @@ enum GameStage {
     double _nextPowerupSpawn;
     BOOL _invincible;
     ParticleSystemArray *_boostEffects;
-    
-
+    BossShip *_boss;
+    BOOL _wantNextStage;
+    SpriteArray *_cannonBalls;
 }
 
 -(void)endScene:(BOOL)win {
@@ -294,6 +295,14 @@ enum GameStage {
     _boostEffects = [[ParticleSystemArray alloc]initWithFile:@"Boost.plist"
                                                     capacity:1
                                                       parent:self];
+    
+    _cannonBalls = [[SpriteArray alloc] initWithCapacity:5
+                                         spriteFrameName:@"Boss_cannon_ball.png"
+                                               batchNode:_batchNode
+                                                   world:_world
+                                               shapeName:@"Boss_cannon_ball"
+                                                   maxHp:1
+                                           healthBarType:HealthBarTypeNone];
 }
 
 -(void)setupBackground {
@@ -380,6 +389,12 @@ enum GameStage {
     _levelManager = [[LevelManager alloc]init];
 }
 
+-(void)setupBoss {
+    _boss = [[BossShip alloc]initWithWorld:_world layer:self];
+    _boss.visible = NO;
+    [_batchNode addChild:_boss];
+}
+
 - (id)init
 {
     self = [super init];
@@ -402,6 +417,7 @@ enum GameStage {
 //        double curTime = CACurrentMediaTime();
 //        _gameWonTime = curTime + 30.0;
         [self setupLevelManager];
+        [self setupBoss];
     }
     return self;
 }
@@ -541,6 +557,10 @@ enum GameStage {
                 }
                 explosion.position = contactPoint;
                 [explosion resetSystem];
+                
+                if (enemyShip == _boss) {
+                    _wantNextStage = YES;
+                }
                 
             } else {
                 [[SimpleAudioEngine sharedEngine] playEffect:@"explosion_small.caf"
@@ -699,6 +719,12 @@ enum GameStage {
     if (newStage) {
         [self newStageStarted];
     }
+    
+    if (_wantNextStage) {
+        _wantNextStage = NO;
+        [_levelManager nextStage];
+        [self newStageStarted];
+    }
 }
 
 -(void)doLevelIntro {
@@ -736,6 +762,15 @@ enum GameStage {
       nil]];
 }
 
+-(void)spawnBoss {
+    CGSize winSize = [CCDirector sharedDirector].winSize;
+    _boss.position = ccp(winSize.width*1.2, winSize.height*1.2);
+    [_boss revive];
+    
+    [self shakeScreen:30];
+    [[SimpleAudioEngine sharedEngine]playEffect:@"boss.caf"];
+}
+
 -(void)newStageStarted {
     if (_levelManager.gameState == GameStateDone) {
         [self endScene:YES];
@@ -743,6 +778,28 @@ enum GameStage {
     else if ([_levelManager boolForProp:@"SpawnLevelIntro"]) {
         [self doLevelIntro];
     }
+    
+    if ([_levelManager hasProp:@"SpawnBoss"]) {
+        [self spawnBoss];
+    }
+}
+
+- (void)shootCannonBallAtShipFromPosition:(CGPoint)position {
+    CGSize winSize = [CCDirector sharedDirector].winSize;
+    GameObject *cannonBall = [_cannonBalls nextSprite];
+    [[SimpleAudioEngine sharedEngine] playEffect:@"cannon.caf" pitch:1.0f pan:0.0f
+                                            gain:0.25f];
+    CGPoint shootVector =
+    ccpNormalize(ccpSub(_ship.position, position));
+    CGPoint shootTarget = ccpMult(shootVector,
+                                  winSize.width*2);
+    cannonBall.position = position;
+    [cannonBall revive];
+    [cannonBall runAction:
+     [CCSequence actions:
+      [CCMoveBy actionWithDuration:5.0 position:shootTarget],
+      [CCCallFuncN actionWithTarget:self selector:@selector(invisNode:)],
+      nil]];
 }
 
 -(void)shootEnemyLaserFromPosition:(CGPoint)position {
@@ -848,6 +905,15 @@ enum GameStage {
     }
 }
 
+-(void)updateBoss:(ccTime)dt {
+    if (_levelManager.gameState != GameStateNormal) return;
+    if (![_levelManager boolForProp:@"SpawnBoss"]) return;
+    
+    if (_boss.visible) {
+        [_boss updateWithShipPosition:_ship.position];
+    }
+}
+
 - (void)update:(ccTime)dt {
     [self updateShipPos:dt];
     [self updateAsteriods:dt];
@@ -862,6 +928,7 @@ enum GameStage {
     [self updateAlienSwarm:dt];
     [self updatePowerups:dt];
     [self updateBoostEffects:dt];
+    [self updateBoss:dt];
 }
 
 #pragma mark - Debug Drawing
